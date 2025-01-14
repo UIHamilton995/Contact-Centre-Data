@@ -34,9 +34,9 @@ const EmailDashboard = () => {
   }, []);
 
   // Calculate statistics
-  const totalEmails = emailsData.length;
-  const sentEmails = emailsData.filter(email => email.Status === "SentEmail").length;
-  const notSentEmails = emailsData.filter(email => email.Status === "NotSent").length;
+  const sentEmails = emailsData.reduce((total, email) => total + (email.SentEmail || 0), 0);
+  const notSentEmails = emailsData.reduce((total, email) => total + (email.NotSent || 0), 0);
+  const totalEmails = sentEmails + notSentEmails;
 
   const pieData = [
     { name: 'Sent', value: sentEmails },
@@ -49,7 +49,7 @@ const EmailDashboard = () => {
     { name: 'Not Sent', value: notSentEmails }
   ];
 
-  const COLORS = ['#0088FE', '#FF8042'];
+  const COLORS = ['#0088FE', '#de5310'];
 
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
@@ -65,44 +65,49 @@ const EmailDashboard = () => {
     setSearchResults(filtered);
   };
 
+  // Helper function to format numbers with commas
+  const formatNumber = (num) => {
+    return num.toLocaleString()
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-200 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-2">
+        <div className="mb-6">
           <img src={logo} alt="Leadway Health Logo" />
           <h1 className="text-3xl font-bold text-gray-800">Email Tracking Dashboard</h1>
           <p className="text-gray-600">Track and monitor email delivery status</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-gray-500 text-sm">Total Emails</h3>
-            <p className="text-5xl font-bold">{totalEmails}</p>
+            <h3 className="text-gray-500 text-sm underline">Total Emails</h3>
+            <p className="text-5xl font-bold">{formatNumber(totalEmails)}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-gray-500 text-sm">Sent Emails</h3>
-            <p className="text-5xl font-bold text-green-600">{sentEmails}</p>
+            <h3 className="text-gray-500 text-sm underline">Sent Emails</h3>
+            <p className="text-5xl font-bold text-green-600">{formatNumber(sentEmails)}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-gray-500 text-sm">Failed Emails</h3>
-            <p className="text-5xl font-bold text-red-600">{notSentEmails}</p>
+            <h3 className="text-gray-500 text-sm underline">Failed Emails</h3>
+            <p className="text-5xl font-bold text-red-600">{formatNumber(notSentEmails)}</p>
           </div>
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-4">Delivery Status Distribution</h3>
+            <h3 className="text-lg font-bold mb-4 border-b">Delivery Status Distribution</h3>
             <div className="flex justify-center">
-              <PieChart width={300} height={300}>
+              <PieChart width={350} height={350}>
                 <Pie
                   data={pieData}
-                  cx={150}
-                  cy={150}
-                  innerRadius={60}
-                  outerRadius={80}
+                  cx={170}
+                  cy={140}
+                  innerRadius={30}
+                  outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
                   label
@@ -117,14 +122,14 @@ const EmailDashboard = () => {
             </div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-4">Email Statistics</h3>
+            <h3 className="text-lg font-bold mb-6 border-b">Email Statistics</h3>
             <BarChart width={400} height={300} data={barData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="value" fill="#8884d8" />
+              <Bar dataKey="value" fill="#5b56a6" />
             </BarChart>
           </div>
         </div>

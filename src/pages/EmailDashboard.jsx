@@ -17,11 +17,18 @@ const EmailDashboard = () => {
       try {
         const response = await fetch(apiUrl);
         const data = await response.json();
+        console.log(data)
+
+        // Sort date of mails, most recent first; descending order
+        const sortedData = data.result.sort((a, b) => {
+          const dateA = new Date(a.DateCreated)
+          const dateB = new Date(b.DateCreated)
+          return dateB - dateA
+        })
         
         // Extract and validate result array from the response
-        const emailResults = data.result || [];
-        setEmailsData(emailResults);
-        setSearchResults(emailResults);
+        setEmailsData(sortedData);
+        setSearchResults(sortedData);
       } catch (error) {
         setError("Failed to fetch data.");
         console.error(error);
@@ -74,14 +81,14 @@ const EmailDashboard = () => {
     <div className="min-h-screen bg-gray-200 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-5">
           <img src={logo} alt="Leadway Health Logo" />
           <h1 className="text-3xl font-bold text-gray-800">Email Tracking Dashboard</h1>
           <p className="text-gray-600">Track and monitor email delivery status</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-gray-500 text-sm underline">Total Emails</h3>
             <p className="text-5xl font-bold">{formatNumber(totalEmails)}</p>
@@ -97,7 +104,7 @@ const EmailDashboard = () => {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-bold mb-4 border-b">Delivery Status Distribution</h3>
             <div className="flex justify-center">
